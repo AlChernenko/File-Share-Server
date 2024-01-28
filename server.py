@@ -15,15 +15,16 @@ def server():
 def accept_connection(server_socket):
     client_socket, client_address = server_socket.accept()
     print("New connection from: ", client_address)
-    default_selector.register(fileobj=client_socket, events=selectors.EVENT_READ, data=send_mes)
+    default_selector.register(fileobj=client_socket, events=selectors.EVENT_READ, data=accepted_mes)
 
-def send_mes(client_socket):
+def accepted_mes(client_socket):
     try:
         request = client_socket.recv(1024)
         if request:
             print(request)
         else:
             print("Connection closed by client: ", client_socket.getpeername())
+            client_socket.send(b'Connection to server successfully')
             default_selector.unregister(client_socket)
             client_socket.close()
     except ConnectionResetError:
